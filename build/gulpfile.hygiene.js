@@ -109,7 +109,8 @@ const copyrightFilter = [
 	'!resources/win32/bin/code.js',
 	'!extensions/markdown-language-features/media/highlight.css',
 	'!extensions/html-language-features/server/src/modes/typescript/*',
-	'!extensions/*/server/bin/*'
+	'!extensions/*/server/bin/*',
+	'!**/dropsource*'
 ];
 
 const eslintFilter = [

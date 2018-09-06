@@ -21,6 +21,7 @@ import { SaveErrorHandler } from 'vs/workbench/parts/files/electron-browser/save
 import { FileEditorInput } from 'vs/workbench/parts/files/common/editors/fileEditorInput';
 import { TextFileEditor } from 'vs/workbench/parts/files/browser/editors/textFileEditor';
 import { BinaryFileEditor } from 'vs/workbench/parts/files/browser/editors/binaryFileEditor';
+import { DropsourceViewFileEditor } from 'vs/workbench/parts/files/browser/editors/dropsourceViewFileEditor';
 import { IInstantiationService } from 'vs/platform/instantiation/common/instantiation';
 import { SyncDescriptor } from 'vs/platform/instantiation/common/descriptors';
 import { IKeybindings } from 'vs/platform/keybinding/common/keybindingsRegistry';
@@ -114,6 +115,17 @@ Registry.as<IEditorRegistry>(EditorExtensions.Editors).registerEditor(
 	[
 		new SyncDescriptor<EditorInput>(FileEditorInput),
 		new SyncDescriptor<EditorInput>(DataUriEditorInput)
+	]
+);
+
+Registry.as<IEditorRegistry>(EditorExtensions.Editors).registerEditor(
+	new EditorDescriptor(
+		DropsourceViewFileEditor,
+		DropsourceViewFileEditor.ID,
+		'Dropsource View File Editor'
+	),
+	[
+		new SyncDescriptor<EditorInput>(FileEditorInput)
 	]
 );
 

@@ -20,8 +20,9 @@ import { IReference } from 'vs/base/common/lifecycle';
 import { telemetryURIDescriptor } from 'vs/platform/telemetry/common/telemetryUtils';
 import { ITextModelService } from 'vs/editor/common/services/resolverService';
 import { IHashService } from 'vs/workbench/services/hash/common/hashService';
-import { FILE_EDITOR_INPUT_ID, TEXT_FILE_EDITOR_ID, BINARY_FILE_EDITOR_ID } from 'vs/workbench/parts/files/common/files';
+import { FILE_EDITOR_INPUT_ID, TEXT_FILE_EDITOR_ID, BINARY_FILE_EDITOR_ID, DROPSOURCE_VIEW_FILE_EDITOR_ID } from 'vs/workbench/parts/files/common/files';
 import { ILabelService } from 'vs/platform/label/common/label';
+import { DropsourceViewEditorModel } from 'vs/workbench/common/editor/dropsourceViewEditorModel';
 
 /**
  * A file editor input is the input type for the file editor of file system resources.
@@ -237,18 +238,34 @@ export class FileEditorInput extends EditorInput implements IFileEditorInput {
 	}
 
 	getPreferredEditorId(candidates: string[]): string {
-		return this.forceOpenAsBinary ? BINARY_FILE_EDITOR_ID : TEXT_FILE_EDITOR_ID;
+		// @QUESTION: will we need a more reliable check for dropsource view files?
+		if (this.isDropsourceView()) {
+			console.log('will use dropsource view editor');
+			return DROPSOURCE_VIEW_FILE_EDITOR_ID; // @TODO: need to register this editor using Registry
+		}
+		else {
+			return this.forceOpenAsBinary ? BINARY_FILE_EDITOR_ID : TEXT_FILE_EDITOR_ID;
+		}
 	}
 
-	resolve(): TPromise<TextFileEditorModel | BinaryEditorModel> {
+	isDropsourceView() {
+		return this.name && paths.extname(this.name) === '.view';
+	}
 
-		// Resolve as binary
-		if (this.forceOpenAsBinary) {
-			return this.doResolveAsBinary();
+	resolve(): TPromise<TextFileEditorModel | BinaryEditorModel | DropsourceViewEditorModel> {
+
+		if (this.isDropsourceView()) {
+			return this.doResolveAsDropsourceView();
 		}
+		else {
+			// Resolve as binary
+			if (this.forceOpenAsBinary) {
+				return this.doResolveAsBinary();
+			}
 
-		// Resolve as text
-		return this.doResolveAsText();
+			// Resolve as text
+			return this.doResolveAsText();
+		}
 	}
 
 	private doResolveAsText(): TPromise<TextFileEditorModel | BinaryEditorModel> {
@@ -284,6 +301,10 @@ export class FileEditorInput extends EditorInput implements IFileEditorInput {
 
 	private doResolveAsBinary(): TPromise<BinaryEditorModel> {
 		return this.instantiationService.createInstance(BinaryEditorModel, this.resource, this.getName()).load().then(m => m as BinaryEditorModel);
+	}
+
+	private doResolveAsDropsourceView(): TPromise<DropsourceViewEditorModel> {
+		return this.instantiationService.createInstance(DropsourceViewEditorModel, this.resource, this.getName()).load().then(m => m as DropsourceViewEditorModel);
 	}
 
 	isResolved(): boolean {

@@ -87,6 +87,8 @@ export const FILE_EDITOR_INPUT_ID = 'workbench.editors.files.fileEditorInput';
  */
 export const BINARY_FILE_EDITOR_ID = 'workbench.editors.files.binaryFileEditor';
 
+export const DROPSOURCE_VIEW_FILE_EDITOR_ID = 'dropsource.editors.files.viewEditor';
+
 
 export interface IFilesConfiguration extends IFilesConfiguration, IWorkbenchEditorConfiguration {
 	explorer: {
