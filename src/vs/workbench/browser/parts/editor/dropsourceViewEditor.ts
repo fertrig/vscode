@@ -28,8 +28,11 @@ export abstract class BaseDropsourceViewEditor extends BaseEditor {
 	protected createEditor(parent: HTMLElement): void {
 		this.containerElement = document.createElement('div');
 		this.containerElement.className = 'dropsource-view-container';
-		this.containerElement.innerText = 'Dropsource Foo Container';
 
+		const header = document.createElement('div');
+		header.innerText = 'Dropsource Foo Container';
+
+		this.containerElement.appendChild(header);
 		parent.appendChild(this.containerElement);
 	}
 
@@ -64,5 +67,9 @@ export abstract class BaseDropsourceViewEditor extends BaseEditor {
 	dispose(): void {
 		// @TODO: may need a more sophisticated way to dispose of all the children
 		this.containerElement = null;
+	}
+
+	getContainer(): HTMLElement {
+		return this.containerElement;
 	}
 }

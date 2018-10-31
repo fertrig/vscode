@@ -241,7 +241,7 @@ export class FileEditorInput extends EditorInput implements IFileEditorInput {
 		// @QUESTION: will we need a more reliable check for dropsource view files?
 		if (this.isDropsourceView()) {
 			console.log('will use dropsource view editor');
-			return DROPSOURCE_VIEW_FILE_EDITOR_ID; // @TODO: need to register this editor using Registry
+			return DROPSOURCE_VIEW_FILE_EDITOR_ID;
 		}
 		else {
 			return this.forceOpenAsBinary ? BINARY_FILE_EDITOR_ID : TEXT_FILE_EDITOR_ID;
@@ -252,10 +252,11 @@ export class FileEditorInput extends EditorInput implements IFileEditorInput {
 		return this.name && paths.extname(this.name) === '.view';
 	}
 
-	resolve(): TPromise<TextFileEditorModel | BinaryEditorModel | DropsourceViewEditorModel> {
+	resolve(): TPromise<TextFileEditorModel | BinaryEditorModel> {
 
 		if (this.isDropsourceView()) {
-			return this.doResolveAsDropsourceView();
+			console.log('will use TextFileEditorModel for dropsource view');
+			return this.doResolveAsText();
 		}
 		else {
 			// Resolve as binary
@@ -303,9 +304,9 @@ export class FileEditorInput extends EditorInput implements IFileEditorInput {
 		return this.instantiationService.createInstance(BinaryEditorModel, this.resource, this.getName()).load().then(m => m as BinaryEditorModel);
 	}
 
-	private doResolveAsDropsourceView(): TPromise<DropsourceViewEditorModel> {
-		return this.instantiationService.createInstance(DropsourceViewEditorModel, this.resource, this.getName()).load().then(m => m as DropsourceViewEditorModel);
-	}
+	// private doResolveAsDropsourceView(): TPromise<DropsourceViewEditorModel> {
+	// 	return this.instantiationService.createInstance(DropsourceViewEditorModel, this.resource, this.getName()).load().then(m => m as DropsourceViewEditorModel);
+	// }
 
 	isResolved(): boolean {
 		return !!this.textFileService.models.get(this.resource);
